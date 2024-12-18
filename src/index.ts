@@ -10,9 +10,9 @@ const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(errorMiddleware);
 
 app.use('/', rootRouter);
+app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
   console.log('App listening on port ' + process.env.PORT);
