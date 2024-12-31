@@ -1,6 +1,8 @@
 import { NextFunction } from 'express';
 import { ErrorCode, HttpException } from './src/exceptions/root';
 import { InternalException } from './src/exceptions/internl-exception';
+import { ZodError } from 'zod';
+import { BadRequestException } from './src/exceptions/bad-requests';
 
 export const errorHandler = (mathod: Function) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -12,11 +14,19 @@ export const errorHandler = (mathod: Function) => {
       if (error instanceof HttpException) {
         exception = error;
       } else {
-        exception = new InternalException(
-          'Something went wrong',
-          error,
-          ErrorCode.INTERNAL_EXCEPTION,
-        );
+        if (error instanceof ZodError) {
+          exception = new BadRequestException(
+            'Unprocessable Entity',
+            ErrorCode.UNPROCESSABLE_ENTITY,
+            error,
+          );
+        } else {
+          exception = new InternalException(
+            'Something went wrong',
+            error,
+            ErrorCode.INTERNAL_EXCEPTION,
+          );
+        }
       }
       next(exception);
     }
