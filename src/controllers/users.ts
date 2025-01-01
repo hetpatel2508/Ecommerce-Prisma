@@ -67,7 +67,7 @@ export const updateUser = async (req: Request, res: Response) => {
     try {
       billingAddressId = await prisma.address.findFirstOrThrow({
         where: {
-          id: Number(validatedData.defaultBillingAddressId),
+          id: Number(validatedData.defaultBillingAddressId), 
         },
       });
       if (billingAddressId.userId !== req.user?.id) {
