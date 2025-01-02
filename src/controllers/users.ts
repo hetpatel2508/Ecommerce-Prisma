@@ -56,7 +56,10 @@ export const updateUser = async (req: Request, res: Response) => {
         },
       });
       if (shippingAddressId.userId !== req.user?.id) {
-        throw new BadRequestException('Address does not belong to user', ErrorCode.ADDRESS_NOT_FOUND);
+        throw new BadRequestException(
+          'Address does not belong to user',
+          ErrorCode.ADDRESS_NOT_FOUND,
+        );
       }
     } catch (error: any) {
       throw new NotFoundException('Address not found', ErrorCode.ADDRESS_DOES_NOT_BELONG_TO_USER);
@@ -67,11 +70,14 @@ export const updateUser = async (req: Request, res: Response) => {
     try {
       billingAddressId = await prisma.address.findFirstOrThrow({
         where: {
-          id: Number(validatedData.defaultBillingAddressId), 
+          id: Number(validatedData.defaultBillingAddressId),
         },
       });
       if (billingAddressId.userId !== req.user?.id) {
-        throw new BadRequestException('Address does not belong to user', ErrorCode.ADDRESS_DOES_NOT_BELONG_TO_USER);
+        throw new BadRequestException(
+          'Address does not belong to user',
+          ErrorCode.ADDRESS_DOES_NOT_BELONG_TO_USER,
+        );
       }
     } catch (error: any) {
       throw new NotFoundException('Address not found', ErrorCode.ADDRESS_NOT_FOUND);

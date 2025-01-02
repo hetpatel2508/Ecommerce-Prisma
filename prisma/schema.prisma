@@ -18,18 +18,27 @@ enum Role {
   USER
 }
 
+enum OrderEventStatus {
+  PENDING
+  ACCEPTED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
 model User {
-  id                       Int       @id @default(autoincrement())
+  id                       Int        @id @default(autoincrement())
   name                     String
-  email                    String    @unique
+  email                    String     @unique
   password                 String
-  role                     Role      @default(USER)
+  role                     Role       @default(USER)
   defaultShippingAddressId Int?
   defaultBillingAddressId  Int?
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
   address                  Address[]
   cartItems                CartItem[]
+  orders                   Order[]
 }
 
 model Address {
@@ -46,14 +55,15 @@ model Address {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   name        String
   description String
   price       Int
   tags        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   cartItems   CartItem[]
+  orderProducts OrderProduct[]
 }
 
 model CartItem {
@@ -63,6 +73,38 @@ model CartItem {
   productId Int
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  netAmount Int
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderProducts OrderProduct[]
+  orderEvents   OrderEvent[]
+}
+
+model OrderProduct {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderEvent {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  status    OrderEventStatus @default(PENDING)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
