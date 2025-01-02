@@ -25,6 +25,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     }
 
     req.user = user;
+    req.hetPatel = "hello there, I'm here to help you out, My self Het Patel";
     next();
   } catch (error: any) {
     next(new UnauthorizedException('Unauthorized', ErrorCode.UNAUTHORIZED));
